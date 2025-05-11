@@ -13,11 +13,35 @@ function createWindow() {
     }
   });
 
-  mainWindow.loadFile('views/register.html');
+  mainWindow.loadFile(path.join(__dirname, 'views/login.html'));
+
+  if (process.env.NODE_ENV === 'development') {
+    mainWindow.webContents.openDevTools();
+  }
+
+  mainWindow.on('closed', () => {
+    mainWindow = null;
+  });
 }
 
+// Инициализация приложения
 app.whenReady().then(createWindow);
 
-ipcMain.on('load-main-page', () => {
-  mainWindow.loadFile('views/main.html');
+// Обработка закрытия окна
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
+
+// Обработка активации приложения
+app.on('activate', () => {
+  if (mainWindow === null) {
+    createWindow();
+  }
+});
+
+// Обработка навигации
+ipcMain.on('navigate', (event, page) => {
+  mainWindow.loadFile(path.join(__dirname, `views/${page}.html`));
 });
