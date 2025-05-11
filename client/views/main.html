@@ -9,6 +9,20 @@
 <body>
   <h1>Добро пожаловать в трекер воды!</h1>
   <p>Вы успешно вошли в систему.</p>
+
+  <h2>Ваш профиль</h2>
+  <p><strong>Имя:</strong> <span id="username"></span></p>
+  <p><strong>Email:</strong> <span id="email"></span></p>
+  <p><strong>Вес:</strong> <span id="weight"></span> кг</p>
+  <p><strong>Дневная норма воды:</strong> <span id="dailyWaterGoal"></span> мл</p>
+
+  <!-- Поле для ввода воды и кнопка -->
+  <h3>Добавить воду</h3>
+  <input type="number" id="waterAmount" placeholder="Введите количество в мл" min="1" />
+  <button id="addWaterBtn">Добавить</button>
+
+  <p id="progressText"></p>
+
   <button id="logoutBtn">Выйти</button>
 
   <script>
@@ -17,5 +31,7 @@
       window.location.href = 'register.html'; // возвращаемся на экран регистрации
     });
   </script>
+
+  <script src="../scripts/renderers/main.js"></script>
 </body>
 </html>
