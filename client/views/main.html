@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Главный экран</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <h1>Добро пожаловать в трекер воды!</h1>
+  <p>Вы успешно вошли в систему.</p>
+  <button id="logoutBtn">Выйти</button>
+
+  <script>
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('token');
+      window.location.href = 'register.html'; // возвращаемся на экран регистрации
+    });
+  </script>
+</body>
+</html>
