@@ -4,12 +4,12 @@ const { pool } = require('../config/database');
 
 describe('Auth API', () => {
     beforeAll(async () => {
-        // Очищаем таблицу пользователей перед тестами
+        // Очищаем таблицу пользователей перед запуском тестов
         await pool.query('TRUNCATE TABLE users CASCADE');
     });
 
     afterAll(async () => {
-        // Закрываем соединение с базой данных
+        // Закрываем соединение с базой данных после всех тестов
         await pool.end();
     });
 
