@@ -1,21 +1,124 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Главный экран</title>
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-  <h1>Добро пожаловать в трекер воды!</h1>
-  <p>Вы успешно вошли в систему.</p>
-  <button id="logoutBtn">Выйти</button>
+<body class="bg-gradient">
+    <div class="window-controls">
+        <button id="minimizeBtn" class="window-btn" title="Свернуть">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="19" x2="19" y2="19"/></svg>
+        </button>
+        <button id="maximizeBtn" class="window-btn" title="Развернуть">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+        </button>
+        <button id="closeBtn" class="window-btn close-btn" title="Закрыть">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg>
+        </button>
+    </div>
 
-  <script>
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      localStorage.removeItem('token');
-      window.location.href = 'register.html'; // возвращаемся на экран регистрации
-    });
-  </script>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">Water Tracker</h1>
+            <button id="logoutButton" class="btn btn-logout">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                </svg>
+                Выйти
+            </button>
+        </header>
+
+        <div class="grid">
+            <!-- Прогресс за день -->
+            <div class="card water-card">
+                <h2 class="card-title">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M12 2c-5.33 4.55-8 8.48-8 11.8 0 4.98 3.8 8.2 8 8.2s8-3.22 8-8.2c0-3.32-2.67-7.25-8-11.8zm0 18c-3.35 0-6-2.57-6-6.2 0-2.34 1.95-5.44 6-9.14 4.05 3.7 6 6.79 6 9.14 0 3.63-2.65 6.2-6 6.2zm-4-6.2c0 2.21 1.79 4 4 4s4-1.79 4-4c0-1.95-1.4-4.25-4-7.5-2.6 3.25-4 5.55-4 7.5z"/>
+                    </svg>
+                    Прогресс за день
+                </h2>
+                <div class="water-progress">
+                    <div class="water-amount" id="todayProgress">0 мл</div>
+                    <div class="progress-container">
+                        <div id="progressBar" class="progress-bar" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">0% от дневной нормы</div>
+                </div>
+            </div>
+
+            <!-- Добавить воду -->
+            <div class="card">
+                <h2 class="card-title">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M12 2c-5.33 4.55-8 8.48-8 11.8 0 4.98 3.8 8.2 8 8.2s8-3.22 8-8.2c0-3.32-2.67-7.25-8-11.8zm0 18c-3.35 0-6-2.57-6-6.2 0-2.34 1.95-5.44 6-9.14 4.05 3.7 6 6.79 6 9.14 0 3.63-2.65 6.2-6 6.2z"/>
+                    </svg>
+                    Добавить воду
+                </h2>
+                <form id="waterForm" class="form">
+                    <div class="form-group">
+                        <input type="number" id="waterAmount" class="input" placeholder="Количество воды (мл)" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                        </svg>
+                        Добавить
+                    </button>
+                </form>
+            </div>
+
+            <!-- Текущий вес -->
+            <div class="card">
+                <h2 class="card-title">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 16c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7zm-1-11h2v6h-2zm0 8h2v2h-2z"/>
+                    </svg>
+                    Текущий вес
+                </h2>
+                <div class="weight-display">
+                    <div class="weight-amount" id="currentWeight">0 кг</div>
+                    <form id="weightForm" class="form">
+                        <div class="form-group">
+                            <input type="number" id="weightInput" class="input" placeholder="Новый вес (кг)" min="20" max="300" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                            Обновить
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Дневная норма -->
+            <div class="card water-card">
+                <h2 class="card-title">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M12 2c-5.33 4.55-8 8.48-8 11.8 0 4.98 3.8 8.2 8 8.2s8-3.22 8-8.2c0-3.32-2.67-7.25-8-11.8zm0 18c-3.35 0-6-2.57-6-6.2 0-2.34 1.95-5.44 6-9.14 4.05 3.7 6 6.79 6 9.14 0 3.63-2.65 6.2-6 6.2zm-4-6.2c0 2.21 1.79 4 4 4s4-1.79 4-4c0-1.95-1.4-4.25-4-7.5-2.6 3.25-4 5.55-4 7.5z"/>
+                    </svg>
+                    Дневная норма
+                </h2>
+                <div class="daily-goal">
+                    <div class="goal-amount" id="dailyGoal">0 мл</div>
+                    <div class="goal-text">Рекомендуемое количество воды в день</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для ошибок -->
+    <div id="errorModal" class="modal">
+        <div class="modal-content">
+            <h3>Ошибка</h3>
+            <p id="errorMessage"></p>
+            <button id="errorCloseBtn" class="btn btn-primary">OK</button>
+        </div>
+    </div>
+
+    <script src="../scripts/main.js"></script>
 </body>
 </html>

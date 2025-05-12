@@ -5,6 +5,7 @@ const db = require('./config/database');
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
 const waterRoutes = require('./routes/water.routes');
+const settingsRoutes = require('./routes/settings.routes');
 const WaterIntake = require('./models/water.model');
 
 const app = express();
@@ -15,24 +16,25 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Routes
+// Маршруты
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/water', waterRoutes);
+app.use('/api/settings', settingsRoutes);
 
-// Error handling middleware
+// Middleware для обработки ошибок
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).json({ message: 'Something went wrong!' });
+    res.status(500).json({ message: 'Что-то пошло не так!' });
 });
 
 // Функция для сброса счетчиков воды
 async function resetWaterCounters() {
     try {
         await WaterIntake.resetDailyIntake();
-        console.log('Water counters reset successfully');
+        console.log('Счетчики воды успешно сброшены');
     } catch (error) {
-        console.error('Error resetting water counters:', error);
+        console.error('Ошибка при сбросе счетчиков воды:', error);
     }
 }
 
@@ -44,16 +46,16 @@ setInterval(() => {
     }
 }, 60000); // Проверяем каждую минуту
 
-// Database connection
+// Подключение к базе данных
 db.connect()
     .then(() => {
-        console.log('Database connected successfully');
+        console.log('База данных успешно подключена');
         const PORT = process.env.PORT || 3000;
         app.listen(PORT, () => {
-            console.log(`Server is running on port ${PORT}`);
+            console.log(`Сервер запущен на порту ${PORT}`);
         });
     })
     .catch(err => {
-        console.error('Database connection failed:', err);
+        console.error('Ошибка подключения к базе данных:', err);
         process.exit(1);
     }); 

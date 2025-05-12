@@ -2,46 +2,126 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 
 let mainWindow;
+let loginWindow;
 
-function createWindow() {
-  mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false
-    }
-  });
+function createLoginWindow() {
+    loginWindow = new BrowserWindow({
+        width: 400,
+        height: 600,
+        resizable: false,
+        minimizable: true,
+        maximizable: false,
+        frame: false,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false
+        }
+    });
 
-  mainWindow.loadFile(path.join(__dirname, 'views/login.html'));
+    loginWindow.loadFile('views/login.html');
+    
+    loginWindow.on('closed', () => {
+        loginWindow = null;
+    });
 
-  if (process.env.NODE_ENV === 'development') {
-    mainWindow.webContents.openDevTools();
-  }
-
-  mainWindow.on('closed', () => {
-    mainWindow = null;
-  });
+    // IPC управление окном
+    ipcMain.on('window-minimize', () => {
+        if (loginWindow) loginWindow.minimize();
+    });
+    ipcMain.on('window-maximize', () => {
+        if (loginWindow) {
+            if (loginWindow.isMaximized()) {
+                loginWindow.unmaximize();
+            } else {
+                loginWindow.maximize();
+            }
+        }
+    });
+    ipcMain.on('window-close', () => {
+        if (loginWindow) loginWindow.close();
+    });
 }
 
-// Инициализация приложения
-app.whenReady().then(createWindow);
+function createMainWindow() {
+    mainWindow = new BrowserWindow({
+        width: 800,
+        height: 800,
+        resizable: false,
+        minimizable: true,
+        maximizable: false,
+        frame: false,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false
+        }
+    });
 
-// Обработка закрытия окна
+    mainWindow.loadFile('views/main.html');
+    
+    mainWindow.on('closed', () => {
+        mainWindow = null;
+    });
+
+    // Обработка фокуса окна
+    mainWindow.on('focus', () => {
+        mainWindow.webContents.send('window-focused');
+    });
+
+    // IPC управление окном
+    ipcMain.on('window-minimize', () => {
+        if (mainWindow) mainWindow.minimize();
+    });
+    ipcMain.on('window-maximize', () => {
+        if (mainWindow) {
+            if (mainWindow.isMaximized()) {
+                mainWindow.unmaximize();
+            } else {
+                mainWindow.maximize();
+            }
+        }
+    });
+    ipcMain.on('window-close', () => {
+        if (mainWindow) mainWindow.close();
+    });
+}
+
+app.whenReady().then(() => {
+    createLoginWindow();
+
+    app.on('activate', () => {
+        if (BrowserWindow.getAllWindows().length === 0) {
+            createLoginWindow();
+        }
+    });
+});
+
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
 });
 
-// Обработка активации приложения
-app.on('activate', () => {
-  if (mainWindow === null) {
-    createWindow();
-  }
+// Обработчики IPC для аутентификации
+ipcMain.on('auth-success', () => {
+    console.log('Auth success received');
+    if (loginWindow) {
+        loginWindow.close();
+    }
+    createMainWindow();
 });
 
-// Обработка навигации
-ipcMain.on('navigate', (event, page) => {
-  mainWindow.loadFile(path.join(__dirname, `views/${page}.html`));
+ipcMain.on('show-login', () => {
+    console.log('Show login received');
+    if (mainWindow) {
+        mainWindow.close();
+    }
+    createLoginWindow();
 });
+
+// Export functions and variables for testing
+module.exports = {
+    createLoginWindow,
+    createMainWindow,
+    getLoginWindow: () => loginWindow,
+    getMainWindow: () => mainWindow
+};

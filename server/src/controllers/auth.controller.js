@@ -16,7 +16,7 @@ class AuthController {
             // Проверяем, существует ли пользователь с таким email
             const existingUser = await User.findByEmail(email);
             if (existingUser) {
-                return res.status(400).json({ message: 'User with this email already exists' });
+                return res.status(400).json({ message: 'Пользователь с таким email уже существует' });
             }
 
             // Создаем нового пользователя
@@ -30,7 +30,7 @@ class AuthController {
             );
 
             res.status(201).json({
-                message: 'User registered successfully',
+                message: 'Пользователь успешно зарегистрирован',
                 user: {
                     id: user.id,
                     username: user.username,
@@ -41,8 +41,8 @@ class AuthController {
                 token
             });
         } catch (error) {
-            console.error('Registration error:', error);
-            res.status(500).json({ message: 'Error during registration' });
+            console.error('Ошибка при регистрации:', error);
+            res.status(500).json({ message: 'Ошибка при регистрации' });
         }
     }
 
@@ -57,18 +57,18 @@ class AuthController {
             
             // Находим пользователя по email
             const user = await User.findByEmail(email);
-            console.log('Found user:', user);
+            console.log('Найден пользователь:', user);
             
             if (!user) {
-                return res.status(401).json({ message: 'Invalid credentials' });
+                return res.status(401).json({ message: 'Неверные учетные данные' });
             }
 
             // Проверяем пароль
-            console.log('Comparing password:', password, 'with hash:', user.password);
+            console.log('Сравнение пароля:', password, 'с хешем:', user.password);
             const isPasswordValid = await bcrypt.compare(password, user.password);
             
             if (!isPasswordValid) {
-                return res.status(401).json({ message: 'Invalid credentials' });
+                return res.status(401).json({ message: 'Неверные учетные данные' });
             }
 
             // Генерируем JWT токен
@@ -79,7 +79,7 @@ class AuthController {
             );
 
             res.json({
-                message: 'Login successful',
+                message: 'Вход выполнен успешно',
                 user: {
                     id: user.id,
                     username: user.username,
@@ -90,8 +90,8 @@ class AuthController {
                 token
             });
         } catch (error) {
-            console.error('Login error:', error);
-            res.status(500).json({ message: 'Error during login' });
+            console.error('Ошибка при входе:', error);
+            res.status(500).json({ message: 'Ошибка при входе' });
         }
     }
 }
